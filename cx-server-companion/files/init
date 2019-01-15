@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cp -r /cx-server/life-cycle-scripts/* /cx-server/mount/
+
+echo "The cx-server and the server.cfg files have been generated"
+echo "Please give an execute permission to the file cx-server"
+echo "Execute ./cx-server help command to know more about the cx-server script"
+
