@@ -67,7 +67,7 @@ In order to use the toolkit, you need a file names `cx-server` and a configurati
 You can generate these files using the docker command
 
 ```sh
-docker run -it --rm -u `id -u`:`id -g` -v ${PWD}:/cx-server/mount/ replace-me/cxserver-companion:latest init
+docker run -it --rm -u `id -u`:`id -g` -v ${PWD}:/cx-server/mount/ ppiper/cxserver-companion:latest init
 ``` 
 
 It will generate the following files
