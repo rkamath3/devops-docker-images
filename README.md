@@ -62,22 +62,22 @@ You can consume these images in three different flavors:
     images.
  
 ### Setting up Jenkins Server
-The `cx-server` is a toolkit that is developed to help the lifecycle of the Jenkins continious delivery server.
-In order to use the toolkit, you need a file names `cx-server` and a configuration file `server.cfg`. 
+The `cx-server` is a toolkit that is developed to manage the lifecycle of the Jenkins server.
+In order to use the toolkit, you need a file named `cx-server` and a configuration file `server.cfg`. 
 You can generate these files using the docker command
 
 ```sh
 docker run -it --rm -u `id -u`:`id -g` -v ${PWD}:/cx-server/mount/ ppiper/cxserver-companion:latest init
 ``` 
 
-It will generate the following files
 Once the files are generated in the current directory, you can launch the below command to start the Jenkins server.
-If you would like to customize the Jenkins, [the operations guide](docs/operations/cx-server-lifecycle.md) will provide more information on the lifecycle management and the customization of the Jenkins. 
 
 ```sh
 ./cx-server start
 ```
- 
+
+If you would like to customize the Jenkins, [the operations guide](docs/operations/cx-server-lifecycle.md) will provide more information on this along with the lifecycle management of the Jenkins. 
+
 ### How to obtain support
 
 Feel free to open new issues for feature requests, bugs or general feedback on
