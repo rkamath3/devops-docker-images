@@ -3,10 +3,12 @@
 This guide describes life-cycle management of the Cx Server for Continuous Integration and Delivery. The server is controlled with the `cx-server` script.
 
 #### Introduction
-The `cx-server` directory is included in projects which are created by using the SAP S/4HANA Cloud SDK Maven Archetypes.
-It contains a life-cycle management utility script `cx-server` and a configuration file `server.cfg`.
+The `cx-server` and the `server.cfg` files will help to manage the complete lifecycle of Jenkins server. You can generated these file by using the below docker command.
+```
+docker run -it --rm -u `id -u`:`id -g` -v ${PWD}:/cx-server/mount/ replace-me/cxserver-companion:latest init
+```
 
-For the convenient usage of the script, a [completion script](https://raw.githubusercontent.com/SAP/cloud-s4-sdk-pipeline-docker/master/s4sdk-jenkins-master/cx-server/cx-server-completion.bash) for `cx-server` is provided. 
+For the convenient usage of the script, a [completion script](https://raw.githubusercontent.com/SAP/devops-docker-images/master/cx-server-companion/cx-server/life-cycle-scrips/cx-server-completion.bash) for `cx-server` is provided. 
 Source it in your shell, or refer to the documentation of your operating system for information on how to install this script system wide.
 
 #### System requirement
@@ -32,7 +34,7 @@ The `cx-server` can be customized to fit your use case. The `server.cfg` file co
 
   | Property | Mandatory | Default Value | Description |
   | --- | --- | --- | --- |
-  |`docker_image` | X | `s4sdk/jenkins-master:latest`|  Jenkins docker image name with the version to be used|
+  |`docker_image` | X | `replace-me/jenkins-master:latest`|  Jenkins docker image name with the version to be used|
   |`docker_registry` |  | Default docker registry used by the docker demon on the host machine |  Docker registry to be used to pull docker images from|
   |`jenkins_home`| X|`jenkins_home_volume`| The volume to be used as a `jenkins_home`. Please ensure, this volume is accessible by the user with id `1000` |
   |`http_port`| X (If `tls_enabled` is `false`) |`80`| The HTTP port on which the server listens for incoming connections.|
@@ -58,7 +60,7 @@ You can start the Jenkins server by launching the `start` command.
 ./cx-server start
 ``` 
 
-When launched, it checks if the Docker container named `s4sdk-jenkins-master` already exists.
+When launched, it checks if the Docker container named `cx-jenkins-master` already exists.
 If yes, it restarts the stopped container. Otherwise, it spawns a new Docker container based on the configuration in `server.cfg`.
 
 ##### status
@@ -115,10 +117,10 @@ The `cx-server` script can be updated via the `update script` command, if a new 
 ##### update image
 By default, the Cx Server image defined by `docker_image` in `server.cfg` always points to the newest released version.
 In productive environments, you will however likely want to fix the Cx Server image to a specific version.
-By defining `docker_image` with a version tag (e.g. `docker_image=s4sdk/jenkins-master:v3`), you avoid unintended updates as a side-effect of restarting the Continuous Delivery server.
+By defining `docker_image` with a version tag (e.g. `docker_image=replace-me/jenkins-master:v3`), you avoid unintended updates as a side-effect of restarting the Continuous Delivery server.
 However, this introduces the risk of getting stuck on an outdated version. Therefore, if you are using an outdated Cx Server version, the `cx-server` script will warn you and recommend to run the `cx-server update image` command.
 The `cx-server update image` command updates the Cx Server to the newest available version.
-If `v6` is the newest released version, running an update with `docker_image=s4sdk/jenkins-master:v3` will update the configuration to `docker_image=s4sdk/jenkins-master:v6`.
+If `v6` is the newest released version, running an update with `docker_image=replace-me/jenkins-master:v3` will update the configuration to `docker_image=replace-me/jenkins-master:v6`.
 For this, it executes the following sequence of steps:
 * Stop potentially running Cx Server instance
 * Perform full backup of home directory
@@ -136,7 +138,7 @@ The `cx-server` provides the local cache for maven and node dependencies. This i
 By default the caching service makes use of maven central and npm registries for downloading the dependencies. This can be customized in `server.cfg`. 
 
 In a distributed build environment, the Nexus server is started on each agent.
-The agent initializer script `launch-s4sdk-agent.sh` takes care of the automatic start of the caching server.
+The agent initializer script `launch-jenkins-agent.sh` takes care of the automatic start of the caching server.
 However, when the agent is disconnected, download cache service **will NOT be stopped** automatically.
 It is the responsibility of an admin to stop the Nexus service.
 This can be achieved by stopping the Docker image on the agent server. 
@@ -145,8 +147,8 @@ Example:
 
 ```bash
 ssh my-user@agent-server
-docker stop s4sdk-nexus
-docker network remove s4sdk-network
+docker stop cx-nexus
+docker network remove cx-network
 ```
 
 If you prefer to use different caching mechanism or not using any, you can disable the caching mechanism in the `server.cfg`.
@@ -179,7 +181,7 @@ You can do it by executing below commands.
 ```
 
 #### Plugins
-All the plugins that are required to run the SAP S/4HANA Cloud SDK Continuous Delivery Pipeline
+All the plugins that are required to run the SAP S/4HANA Cloud SDK Continuous Delivery Pipeline and the Piper steps
 are already pre-installed. If you update or downgrade them to a specific version, it will be lost every time the `cx-server` image is updated. 
 All the plugins are updated with the latest version. 
 If there is a need, the user can install additional plugins and configure them. 
@@ -202,8 +204,8 @@ docker system prune --all
 You can find the logs of the `cx-server` and the caching server as part of the Docker logs on the host machine. 
 
 ```
-docker logs s4sdk-jenkins-master
-docker logs s4sdk-nexus
+docker logs cx-jenkins-master
+docker logs cx-nexus
 ```
 
 
